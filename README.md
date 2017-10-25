@@ -13,38 +13,14 @@ General usage is very similar to a std `HashSet`. However, a `LinkedHashSet` **m
 As such methods `front()`, `pop_front()`, `back()` and `pop_back()` are provided.
 
 ```rust
+extern crate linked_hash_set;
 use linked_hash_set::LinkedHashSet;
-// Type inference lets us omit an explicit type signature (which
-// would be `LinkedHashSet<&str>` in this example).
-let mut books = LinkedHashSet::new();
 
-// Add some books.
-books.insert("A Dance With Dragons");
-books.insert("To Kill a Mockingbird");
-books.insert("The Odyssey");
-books.insert("The Great Gatsby");
+let mut set = LinkedHashSet::new();
+set.insert(234);
+set.insert(123);
+set.insert(345);
+set.insert(123);
 
-// Check for a specific one.
-if !books.contains("The Winds of Winter") {
-    println!(
-        "We have {} books, but The Winds of Winter ain't one.",
-        books.len()
-    );
-}
-
-// Remove a book.
-books.remove("The Odyssey");
-
-// Remove the first inserted book.
-books.pop_front();
-
-// Iterate over the remaining books in insertion order.
-for book in &books {
-    println!("{}", book);
-}
-
-assert_eq!(
-    books.into_iter().collect::<Vec<_>>(),
-    vec!["To Kill a Mockingbird", "The Great Gatsby"]
-);
+assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![234, 345, 123]);
 ```

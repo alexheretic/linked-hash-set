@@ -1,3 +1,23 @@
+//! A linked hash set implementation based on the `linked_hash_map` crate.
+//! See [`LinkedHashSet`](struct.LinkedHashSet.html).
+//!
+//! # Examples
+//!
+//! ```
+//! extern crate linked_hash_set;
+//! use linked_hash_set::LinkedHashSet;
+//!
+//! # fn main() {
+//! let mut set = LinkedHashSet::new();
+//! set.insert(234);
+//! set.insert(123);
+//! set.insert(345);
+//! set.insert(123);
+//!
+//! assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![234, 345, 123]);
+//! # }
+//! ```
+
 extern crate linked_hash_map;
 
 #[cfg(feature = "serde")]
@@ -16,10 +36,8 @@ use linked_hash_map::{LinkedHashMap, Keys};
 // parts relying on std `HashMap` functionality that is not present in `LinkedHashMap` or
 // relying on private access to map internals have been removed.
 
-/// A linked hash set implemented as a `linked_hash_map::LinkedHashMap`
-/// where the value is `()`.
-/// In a similar way std `HashSet` is implemented from
-/// `HashMap`.
+/// A linked hash set implemented as a `linked_hash_map::LinkedHashMap` where the value is
+/// `()`, in a similar way std `HashSet` is implemented from `HashMap`.
 ///
 /// General usage is very similar to a std `HashSet`. However, a `LinkedHashSet` **maintains
 /// insertion order** using a doubly-linked list running through its entries. As such methods
