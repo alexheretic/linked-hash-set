@@ -1,21 +1,21 @@
-# linked\_hash\_set
-
-[![Build Status](https://travis-ci.org/alexheretic/linked-hash-set.svg?branch=master)](https://travis-ci.org/alexheretic/linked-hash-set)
+linked\_hash\_set
 [![crates.io](https://img.shields.io/crates/v/linked_hash_set.svg)](https://crates.io/crates/linked_hash_set)
 [![Documentation](https://docs.rs/linked_hash_set/badge.svg)](https://docs.rs/linked_hash_set)
+=================
 
 This library provides an hashed set with predictable iteration order, based on the insertion order of elements.
 It is implemented as a `linked_hash_map::LinkedHashMap` where the value is `()`, in a similar way as `HashSet` is implemented from `HashMap` in stdlib.
 
-## Comparison
+## Comparison with std [`HashSet`](https://doc.rust-lang.org/std/collections/struct.HashSet.html)
 
 General usage is very similar to a traditional hashed set, but this structure also maintains **insertion order**.
 
 Compared to `HashSet`, a `LinkedHashSet` uses an additional doubly-linked list running through its entries.
 As such methods `front()`, `pop_front()`, `back()` and `pop_back()` are provided.
 
-Compared to `ordermap::OrderSet`, a `LinkedHashSet` retains **strict** insertion order and can perform operations (e.g. removals) mid-list in constant time.
-Removals are done without affecting the order of the remaining elements.
+## Comparison with [`OrderSet`](https://github.com/bluss/ordermap)
+
+Compared to `ordermap::OrderSet`, while both maintain insertion order a `LinkedHashSet` uses a linked list allowing performant removals that don't affect the order of the remaining elements. However, when this distinction is unimportant ordermap should be the faster option.
 
 ## Example
 
