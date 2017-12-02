@@ -501,6 +501,32 @@ impl<T, S> LinkedHashSet<T, S>
         self.map.contains_key(value)
     }
 
+    /// If already present, moves a value to the end of the ordering.
+    ///
+    /// If the set did have this value present, `true` is returned.
+    ///
+    /// If the set did not have this value present, `false` is returned.
+    ///
+    /// Similar to `LinkedHashMap::get_refresh`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use linked_hash_set::LinkedHashSet;
+    ///
+    /// let mut set: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
+    /// let was_refreshed = set.refresh(&2);
+    ///
+    /// assert_eq!(was_refreshed, true);
+    /// assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![1, 3, 2]);
+    /// ```
+    pub fn refresh<Q: ?Sized>(&mut self, value: &Q) -> bool
+    where T: Borrow<Q>,
+          Q: Hash + Eq
+    {
+        self.map.get_refresh(value).is_some()
+    }
+
     // TODO Non-trivial port without private access to map
     // /// Returns a reference to the value in the set, if any, that is equal to the given value.
     // ///
@@ -587,6 +613,10 @@ impl<T, S> LinkedHashSet<T, S>
     ///
     /// If the set did have this value present, `false` is returned.
     ///
+    /// Note that performing this action will always place the value at the end of the ordering
+    /// whether the set already contained the value or not. Also see
+    /// [`insert_if_absent`](#method.insert_if_absent).
+    ///
     /// # Examples
     ///
     /// ```
@@ -602,6 +632,33 @@ impl<T, S> LinkedHashSet<T, S>
         self.map.insert(value, ()).is_none()
     }
 
+    /// Adds a value to the set, if not already present. The distinction with `insert` is that
+    /// order of elements is unaffected when calling this method for a value already contained.
+    ///
+    /// If the set did not have this value present, `true` is returned.
+    ///
+    /// If the set did have this value present, `false` is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use linked_hash_set::LinkedHashSet;
+    ///
+    /// let mut set = LinkedHashSet::new();
+    ///
+    /// assert_eq!(set.insert_if_absent(2), true);
+    /// assert_eq!(set.insert_if_absent(2), false);
+    /// assert_eq!(set.len(), 1);
+    /// ```
+    pub fn insert_if_absent(&mut self, value: T) -> bool {
+        if !self.map.contains_key(&value) {
+            self.map.insert(value, ()).is_none()
+        }
+        else {
+            false
+        }
+    }
+
     // TODO Non-trivial port without private access to map
     // /// Adds a value to the set, replacing the existing value, if any, that is equal to the given
     // /// one. Returns the replaced value.
@@ -615,6 +672,8 @@ impl<T, S> LinkedHashSet<T, S>
     /// The value may be any borrowed form of the set's value type, but
     /// `Hash` and `Eq` on the borrowed form *must* match those for
     /// the value type.
+    ///
+    /// This operation will not affect the ordering of the other elements.
     ///
     /// # Examples
     ///
