@@ -9,10 +9,10 @@
 //!
 //! # fn main() {
 //! let mut set = LinkedHashSet::new();
-//! set.insert(234);
-//! set.insert(123);
-//! set.insert(345);
-//! set.insert(123);
+//! assert!(set.insert(234));
+//! assert!(set.insert(123));
+//! assert!(set.insert(345));
+//! assert!(!set.insert(123));
 //!
 //! assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![234, 345, 123]);
 //! # }

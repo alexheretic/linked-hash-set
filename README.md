@@ -4,7 +4,7 @@ linked\_hash\_set
 =================
 
 This library provides an hashed set with predictable iteration order, based on the insertion order of elements.
-It is implemented as a `linked_hash_map::LinkedHashMap` where the value is `()`, in a similar way as `HashSet` is implemented from `HashMap` in stdlib.
+It is implemented as a [`linked_hash_map::LinkedHashMap`](https://github.com/contain-rs/linked-hash-map) where the value is `()`, in a similar way as `HashSet` is implemented from `HashMap` in stdlib.
 
 ## Comparison with std [`HashSet`](https://doc.rust-lang.org/std/collections/struct.HashSet.html)
 
@@ -24,11 +24,10 @@ extern crate linked_hash_set;
 use linked_hash_set::LinkedHashSet;
 
 let mut set = LinkedHashSet::new();
-set.insert(234);
-set.insert(123);
-set.insert(345);
-let new_element = set.insert(123);
+assert!(set.insert(234));
+assert!(set.insert(123));
+assert!(set.insert(345));
+assert!(!set.insert(123));
 
-assert_eq!(new_element, false);
 assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![234, 345, 123]);
 ```
