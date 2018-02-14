@@ -13,9 +13,9 @@ General usage is very similar to a traditional hashed set, but this structure al
 Compared to `HashSet`, a `LinkedHashSet` uses an additional doubly-linked list running through its entries.
 As such methods `front()`, `pop_front()`, `back()` and `pop_back()` are provided.
 
-## Comparison with [`OrderSet`](https://github.com/bluss/ordermap)
+## Comparison with [`IndexSet`](https://github.com/bluss/indexmap)
 
-Compared to `ordermap::OrderSet`, while both maintain insertion order a `LinkedHashSet` uses a linked list allowing performant removals that don't affect the order of the remaining elements. However, when this distinction is unimportant ordermap should be the faster option.
+Compared to `indexmap::IndexSet`, while both maintain insertion order a `LinkedHashSet` uses a linked list allowing performant removals that don't affect the order of the remaining elements. However, when this distinction is unimportant indexmap should be the faster option.
 
 ## Example
 
