@@ -23,14 +23,14 @@ extern crate linked_hash_map;
 #[cfg(feature = "serde")]
 pub mod serde;
 
-use std::borrow::Borrow;
-use std::fmt;
-use std::hash::{Hash, BuildHasher};
-use std::iter::{Chain, FromIterator};
-use std::ops::{BitOr, BitAnd, BitXor, Sub};
-use std::collections::hash_map::{RandomState};
 use linked_hash_map as map;
-use linked_hash_map::{LinkedHashMap, Keys};
+use linked_hash_map::{Keys, LinkedHashMap};
+use std::borrow::Borrow;
+use std::collections::hash_map::RandomState;
+use std::fmt;
+use std::hash::{BuildHasher, Hash, Hasher};
+use std::iter::{Chain, FromIterator};
+use std::ops::{BitAnd, BitOr, BitXor, Sub};
 
 // Note: This implementation is adapted from std `HashSet` implementation ~2017-10
 // parts relying on std `HashMap` functionality that is not present in `LinkedHashMap` or
@@ -160,8 +160,9 @@ impl<T: Hash + Eq> LinkedHashSet<T, RandomState> {
 }
 
 impl<T, S> LinkedHashSet<T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
     /// Creates a new empty hash set which will use the given hasher to hash
     /// keys.
@@ -495,8 +496,9 @@ impl<T, S> LinkedHashSet<T, S>
     /// assert_eq!(set.contains(&4), false);
     /// ```
     pub fn contains<Q: ?Sized>(&self, value: &Q) -> bool
-        where T: Borrow<Q>,
-              Q: Hash + Eq
+    where
+        T: Borrow<Q>,
+        Q: Hash + Eq,
     {
         self.map.contains_key(value)
     }
@@ -521,8 +523,9 @@ impl<T, S> LinkedHashSet<T, S>
     /// assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![1, 3, 2]);
     /// ```
     pub fn refresh<Q: ?Sized>(&mut self, value: &Q) -> bool
-    where T: Borrow<Q>,
-          Q: Hash + Eq
+    where
+        T: Borrow<Q>,
+        Q: Hash + Eq,
     {
         self.map.get_refresh(value).is_some()
     }
@@ -687,8 +690,9 @@ impl<T, S> LinkedHashSet<T, S>
     /// assert_eq!(set.remove(&2), false);
     /// ```
     pub fn remove<Q: ?Sized>(&mut self, value: &Q) -> bool
-        where T: Borrow<Q>,
-              Q: Hash + Eq
+    where
+        T: Borrow<Q>,
+        Q: Hash + Eq,
     {
         self.map.remove(value).is_some()
     }
@@ -751,15 +755,14 @@ impl<T, S> LinkedHashSet<T, S>
 impl<T: Hash + Eq + Clone, S: BuildHasher + Clone> Clone for LinkedHashSet<T, S> {
     fn clone(&self) -> Self {
         let map = self.map.clone();
-        Self {
-            map,
-        }
+        Self { map }
     }
 }
 
 impl<T, S> PartialEq for LinkedHashSet<T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
     fn eq(&self, other: &LinkedHashSet<T, S>) -> bool {
         if self.len() != other.len() {
@@ -770,15 +773,29 @@ impl<T, S> PartialEq for LinkedHashSet<T, S>
     }
 }
 
+impl<T, S> Hash for LinkedHashSet<T, S>
+where
+    T: Eq + Hash,
+    S: BuildHasher,
+{
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        for e in self {
+            e.hash(state);
+        }
+    }
+}
+
 impl<T, S> Eq for LinkedHashSet<T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
 }
 
 impl<T, S> fmt::Debug for LinkedHashSet<T, S>
-    where T: Eq + Hash + fmt::Debug,
-          S: BuildHasher
+where
+    T: Eq + Hash + fmt::Debug,
+    S: BuildHasher,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_set().entries(self.iter()).finish()
@@ -786,8 +803,9 @@ impl<T, S> fmt::Debug for LinkedHashSet<T, S>
 }
 
 impl<T, S> FromIterator<T> for LinkedHashSet<T, S>
-    where T: Eq + Hash,
-          S: BuildHasher + Default
+where
+    T: Eq + Hash,
+    S: BuildHasher + Default,
 {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> LinkedHashSet<T, S> {
         let mut set = LinkedHashSet::with_hasher(Default::default());
@@ -797,8 +815,9 @@ impl<T, S> FromIterator<T> for LinkedHashSet<T, S>
 }
 
 impl<T, S> Extend<T> for LinkedHashSet<T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
     fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
         self.map.extend(iter.into_iter().map(|k| (k, ())));
@@ -806,8 +825,9 @@ impl<T, S> Extend<T> for LinkedHashSet<T, S>
 }
 
 impl<'a, T, S> Extend<&'a T> for LinkedHashSet<T, S>
-    where T: 'a + Eq + Hash + Copy,
-          S: BuildHasher
+where
+    T: 'a + Eq + Hash + Copy,
+    S: BuildHasher,
 {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         self.extend(iter.into_iter().cloned());
@@ -815,8 +835,9 @@ impl<'a, T, S> Extend<&'a T> for LinkedHashSet<T, S>
 }
 
 impl<T, S> Default for LinkedHashSet<T, S>
-    where T: Eq + Hash,
-          S: BuildHasher + Default
+where
+    T: Eq + Hash,
+    S: BuildHasher + Default,
 {
     /// Creates an empty `LinkedHashSet<T, S>` with the `Default` value for the hasher.
     fn default() -> LinkedHashSet<T, S> {
@@ -825,8 +846,9 @@ impl<T, S> Default for LinkedHashSet<T, S>
 }
 
 impl<'a, 'b, T, S> BitOr<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
-    where T: Eq + Hash + Clone,
-          S: BuildHasher + Default
+where
+    T: Eq + Hash + Clone,
+    S: BuildHasher + Default,
 {
     type Output = LinkedHashSet<T, S>;
 
@@ -856,8 +878,9 @@ impl<'a, 'b, T, S> BitOr<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
 }
 
 impl<'a, 'b, T, S> BitAnd<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
-    where T: Eq + Hash + Clone,
-          S: BuildHasher + Default
+where
+    T: Eq + Hash + Clone,
+    S: BuildHasher + Default,
 {
     type Output = LinkedHashSet<T, S>;
 
@@ -887,8 +910,9 @@ impl<'a, 'b, T, S> BitAnd<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
 }
 
 impl<'a, 'b, T, S> BitXor<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
-    where T: Eq + Hash + Clone,
-          S: BuildHasher + Default
+where
+    T: Eq + Hash + Clone,
+    S: BuildHasher + Default,
 {
     type Output = LinkedHashSet<T, S>;
 
@@ -918,8 +942,9 @@ impl<'a, 'b, T, S> BitXor<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
 }
 
 impl<'a, 'b, T, S> Sub<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
-    where T: Eq + Hash + Clone,
-          S: BuildHasher + Default
+where
+    T: Eq + Hash + Clone,
+    S: BuildHasher + Default,
 {
     type Output = LinkedHashSet<T, S>;
 
@@ -1032,8 +1057,9 @@ pub struct Union<'a, T: 'a, S: 'a> {
 }
 
 impl<'a, T, S> IntoIterator for &'a LinkedHashSet<T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
@@ -1044,8 +1070,9 @@ impl<'a, T, S> IntoIterator for &'a LinkedHashSet<T, S>
 }
 
 impl<T, S> IntoIterator for LinkedHashSet<T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
     type Item = T;
     type IntoIter = IntoIter<T>;
@@ -1163,8 +1190,9 @@ impl<'a, T, S> Clone for Intersection<'a, T, S> {
 }
 
 impl<'a, T, S> Iterator for Intersection<'a, T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
     type Item = &'a T;
 
@@ -1188,8 +1216,9 @@ impl<'a, T, S> Iterator for Intersection<'a, T, S>
 }
 
 impl<'a, T, S> fmt::Debug for Intersection<'a, T, S>
-    where T: fmt::Debug + Eq + Hash,
-          S: BuildHasher
+where
+    T: fmt::Debug + Eq + Hash,
+    S: BuildHasher,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
@@ -1203,8 +1232,9 @@ impl<'a, T, S> Clone for Difference<'a, T, S> {
 }
 
 impl<'a, T, S> Iterator for Difference<'a, T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
     type Item = &'a T;
 
@@ -1228,8 +1258,9 @@ impl<'a, T, S> Iterator for Difference<'a, T, S>
 }
 
 impl<'a, T, S> fmt::Debug for Difference<'a, T, S>
-    where T: fmt::Debug + Eq + Hash,
-          S: BuildHasher
+where
+    T: fmt::Debug + Eq + Hash,
+    S: BuildHasher,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
@@ -1243,8 +1274,9 @@ impl<'a, T, S> Clone for SymmetricDifference<'a, T, S> {
 }
 
 impl<'a, T, S> Iterator for SymmetricDifference<'a, T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
     type Item = &'a T;
 
@@ -1257,8 +1289,9 @@ impl<'a, T, S> Iterator for SymmetricDifference<'a, T, S>
 }
 
 impl<'a, T, S> fmt::Debug for SymmetricDifference<'a, T, S>
-    where T: fmt::Debug + Eq + Hash,
-          S: BuildHasher
+where
+    T: fmt::Debug + Eq + Hash,
+    S: BuildHasher,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
@@ -1272,8 +1305,9 @@ impl<'a, T, S> Clone for Union<'a, T, S> {
 }
 
 impl<'a, T, S> fmt::Debug for Union<'a, T, S>
-    where T: fmt::Debug + Eq + Hash,
-          S: BuildHasher
+where
+    T: fmt::Debug + Eq + Hash,
+    S: BuildHasher,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
@@ -1281,8 +1315,9 @@ impl<'a, T, S> fmt::Debug for Union<'a, T, S>
 }
 
 impl<'a, T, S> Iterator for Union<'a, T, S>
-    where T: Eq + Hash,
-          S: BuildHasher
+where
+    T: Eq + Hash,
+    S: BuildHasher,
 {
     type Item = &'a T;
 
@@ -1734,7 +1769,10 @@ mod test_linked {
     #[test]
     fn clone_order_is_maintained() {
         let set = set![123, 234, 56, 677];
-        assert_eq!(set.clone().into_iter().collect::<Vec<_>>(), vec![123, 234, 56, 677]);
+        assert_eq!(
+            set.clone().into_iter().collect::<Vec<_>>(),
+            vec![123, 234, 56, 677]
+        );
     }
 
     #[test]
