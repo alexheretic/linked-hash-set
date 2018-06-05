@@ -1122,6 +1122,11 @@ impl<'a, K> ExactSizeIterator for Iter<'a, K> {
         self.iter.len()
     }
 }
+impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
+    fn next_back(&mut self) -> Option<&'a T> {
+        self.iter.next_back()
+    }
+}
 
 impl<'a, K: fmt::Debug> fmt::Debug for Iter<'a, K> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -1142,6 +1147,11 @@ impl<K> Iterator for IntoIter<K> {
 impl<K> ExactSizeIterator for IntoIter<K> {
     fn len(&self) -> usize {
         self.iter.len()
+    }
+}
+impl<K> DoubleEndedIterator for IntoIter<K> {
+    fn next_back(&mut self) -> Option<K> {
+        self.iter.next_back().map(|(k, _)| k)
     }
 }
 
@@ -1799,5 +1809,32 @@ mod test_linked {
         let mut set = set![123, 234, 56, 677];
         assert_eq!(set.pop_back(), Some(677));
         assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![123, 234, 56]);
+    }
+
+    #[test]
+    fn double_ended_iter() {
+        let set = set![123, 234, 56, 677];
+        let mut iter = set.iter();
+
+        assert_eq!(iter.next(), Some(&123));
+        assert_eq!(iter.next(), Some(&234));
+        assert_eq!(iter.next_back(), Some(&677));
+        assert_eq!(iter.next_back(), Some(&56));
+
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.next_back(), None);
+    }
+
+    #[test]
+    fn double_ended_into_iter() {
+        let mut iter = set![123, 234, 56, 677].into_iter();
+
+        assert_eq!(iter.next(), Some(123));
+        assert_eq!(iter.next_back(), Some(677));
+        assert_eq!(iter.next_back(), Some(56));
+        assert_eq!(iter.next_back(), Some(234));
+
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.next_back(), None);
     }
 }
