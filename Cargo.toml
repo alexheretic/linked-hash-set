@@ -1,6 +1,6 @@
 [package]
 name = "linked_hash_set"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Alex Butler <alexheretic@gmail.com>"]
 description = "HashSet with insertion ordering"
 repository = "https://github.com/alexheretic/linked-hash-set"
