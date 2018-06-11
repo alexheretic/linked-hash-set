@@ -11,7 +11,7 @@ It is implemented as a [`linked_hash_map::LinkedHashMap`](https://github.com/con
 General usage is very similar to a traditional hashed set, but this structure also maintains **insertion order**.
 
 Compared to `HashSet`, a `LinkedHashSet` uses an additional doubly-linked list running through its entries.
-As such methods `front()`, `pop_front()`, `back()` and `pop_back()` are provided.
+As such methods `front()`, `pop_front()`, `back()`, `pop_back()` and `refresh()` are provided.
 
 ## Comparison with [`IndexSet`](https://github.com/bluss/indexmap)
 
