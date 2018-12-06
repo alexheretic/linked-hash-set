@@ -96,10 +96,22 @@ use std::ops::{BitAnd, BitOr, BitXor, Sub};
 ///
 /// let mut vikings = LinkedHashSet::new();
 ///
-/// vikings.insert(Viking { name: "Einar", power: 9 });
-/// vikings.insert(Viking { name: "Einar", power: 9 });
-/// vikings.insert(Viking { name: "Olaf", power: 4 });
-/// vikings.insert(Viking { name: "Harald", power: 8 });
+/// vikings.insert(Viking {
+///     name: "Einar",
+///     power: 9,
+/// });
+/// vikings.insert(Viking {
+///     name: "Einar",
+///     power: 9,
+/// });
+/// vikings.insert(Viking {
+///     name: "Olaf",
+///     power: 4,
+/// });
+/// vikings.insert(Viking {
+///     name: "Harald",
+///     power: 8,
+/// });
 ///
 /// // Use derived implementation to print the vikings.
 /// for x in &vikings {
@@ -114,7 +126,7 @@ use std::ops::{BitAnd, BitOr, BitXor, Sub};
 ///
 /// fn main() {
 ///     let viking_names: LinkedHashSet<&str> =
-///         [ "Einar", "Olaf", "Harald" ].iter().cloned().collect();
+///         ["Einar", "Olaf", "Harald"].iter().cloned().collect();
 ///     // use the values stored in the set
 /// }
 /// ```
@@ -138,7 +150,9 @@ impl<T: Hash + Eq> LinkedHashSet<T, RandomState> {
     /// ```
     #[inline]
     pub fn new() -> LinkedHashSet<T, RandomState> {
-        LinkedHashSet { map: LinkedHashMap::new() }
+        LinkedHashSet {
+            map: LinkedHashMap::new(),
+        }
     }
 
     /// Creates an empty `LinkedHashSet` with the specified capacity.
@@ -155,7 +169,9 @@ impl<T: Hash + Eq> LinkedHashSet<T, RandomState> {
     /// ```
     #[inline]
     pub fn with_capacity(capacity: usize) -> LinkedHashSet<T, RandomState> {
-        LinkedHashSet { map: LinkedHashMap::with_capacity(capacity) }
+        LinkedHashSet {
+            map: LinkedHashMap::with_capacity(capacity),
+        }
     }
 }
 
@@ -186,7 +202,9 @@ where
     /// ```
     #[inline]
     pub fn with_hasher(hasher: S) -> LinkedHashSet<T, S> {
-        LinkedHashSet { map: LinkedHashMap::with_hasher(hasher) }
+        LinkedHashSet {
+            map: LinkedHashMap::with_hasher(hasher),
+        }
     }
 
     /// Creates an empty `LinkedHashSet` with with the specified capacity, using
@@ -212,7 +230,9 @@ where
     /// ```
     #[inline]
     pub fn with_capacity_and_hasher(capacity: usize, hasher: S) -> LinkedHashSet<T, S> {
-        LinkedHashSet { map: LinkedHashMap::with_capacity_and_hasher(capacity, hasher) }
+        LinkedHashSet {
+            map: LinkedHashMap::with_capacity_and_hasher(capacity, hasher),
+        }
     }
 
     /// Returns a reference to the set's `BuildHasher`.
@@ -302,7 +322,9 @@ where
     /// }
     /// ```
     pub fn iter(&self) -> Iter<T> {
-        Iter { iter: self.map.keys() }
+        Iter {
+            iter: self.map.keys(),
+        }
     }
 
     /// Visits the values representing the difference,
@@ -356,10 +378,13 @@ where
     /// assert_eq!(diff1, diff2);
     /// assert_eq!(diff1, [1, 4].iter().collect());
     /// ```
-    pub fn symmetric_difference<'a>(&'a self,
-                                    other: &'a LinkedHashSet<T, S>)
-                                    -> SymmetricDifference<'a, T, S> {
-        SymmetricDifference { iter: self.difference(other).chain(other.difference(self)) }
+    pub fn symmetric_difference<'a>(
+        &'a self,
+        other: &'a LinkedHashSet<T, S>,
+    ) -> SymmetricDifference<'a, T, S> {
+        SymmetricDifference {
+            iter: self.difference(other).chain(other.difference(self)),
+        }
     }
 
     /// Visits the values representing the intersection,
@@ -406,7 +431,9 @@ where
     /// assert_eq!(union, [1, 2, 3, 4].iter().collect());
     /// ```
     pub fn union<'a>(&'a self, other: &'a LinkedHashSet<T, S>) -> Union<'a, T, S> {
-        Union { iter: self.iter().chain(other.difference(self)) }
+        Union {
+            iter: self.iter().chain(other.difference(self)),
+        }
     }
 
     /// Returns the number of elements in the set.
@@ -656,8 +683,7 @@ where
     pub fn insert_if_absent(&mut self, value: T) -> bool {
         if !self.map.contains_key(&value) {
             self.map.insert(value, ()).is_none()
-        }
-        else {
+        } else {
             false
         }
     }
@@ -841,7 +867,9 @@ where
 {
     /// Creates an empty `LinkedHashSet<T, S>` with the `Default` value for the hasher.
     fn default() -> LinkedHashSet<T, S> {
-        LinkedHashSet { map: LinkedHashMap::default() }
+        LinkedHashSet {
+            map: LinkedHashMap::default(),
+        }
     }
 }
 
@@ -1098,13 +1126,17 @@ where
     /// }
     /// ```
     fn into_iter(self) -> IntoIter<T> {
-        IntoIter { iter: self.map.into_iter() }
+        IntoIter {
+            iter: self.map.into_iter(),
+        }
     }
 }
 
 impl<'a, K> Clone for Iter<'a, K> {
     fn clone(&self) -> Iter<'a, K> {
-        Iter { iter: self.iter.clone() }
+        Iter {
+            iter: self.iter.clone(),
+        }
     }
 }
 impl<'a, K> Iterator for Iter<'a, K> {
@@ -1195,7 +1227,10 @@ impl<K> DoubleEndedIterator for IntoIter<K> {
 
 impl<'a, T, S> Clone for Intersection<'a, T, S> {
     fn clone(&self) -> Intersection<'a, T, S> {
-        Intersection { iter: self.iter.clone(), ..*self }
+        Intersection {
+            iter: self.iter.clone(),
+            ..*self
+        }
     }
 }
 
@@ -1237,7 +1272,10 @@ where
 
 impl<'a, T, S> Clone for Difference<'a, T, S> {
     fn clone(&self) -> Difference<'a, T, S> {
-        Difference { iter: self.iter.clone(), ..*self }
+        Difference {
+            iter: self.iter.clone(),
+            ..*self
+        }
     }
 }
 
@@ -1279,7 +1317,9 @@ where
 
 impl<'a, T, S> Clone for SymmetricDifference<'a, T, S> {
     fn clone(&self) -> SymmetricDifference<'a, T, S> {
-        SymmetricDifference { iter: self.iter.clone() }
+        SymmetricDifference {
+            iter: self.iter.clone(),
+        }
     }
 }
 
@@ -1310,7 +1350,9 @@ where
 
 impl<'a, T, S> Clone for Union<'a, T, S> {
     fn clone(&self) -> Union<'a, T, S> {
-        Union { iter: self.iter.clone() }
+        Union {
+            iter: self.iter.clone(),
+        }
     }
 }
 

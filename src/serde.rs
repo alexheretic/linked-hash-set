@@ -2,21 +2,23 @@
 
 extern crate serde;
 
-use std::fmt::{Formatter, Result as FmtResult};
-use std::marker::PhantomData;
-use std::hash::{BuildHasher, Hash};
-use super::LinkedHashSet;
-use self::serde::{Serialize, Serializer, Deserialize, Deserializer};
+use self::serde::de::{Error, SeqAccess, Visitor};
 use self::serde::ser::SerializeSeq;
-use self::serde::de::{Visitor, SeqAccess, Error};
+use self::serde::{Deserialize, Deserializer, Serialize, Serializer};
+use super::LinkedHashSet;
+use std::fmt::{Formatter, Result as FmtResult};
+use std::hash::{BuildHasher, Hash};
+use std::marker::PhantomData;
 
 impl<K, S> Serialize for LinkedHashSet<K, S>
-    where K: Serialize + Eq + Hash,
-          S: BuildHasher
+where
+    K: Serialize + Eq + Hash,
+    S: BuildHasher,
 {
     #[inline]
-    fn serialize<T>(&self, serializer:T) -> Result<T::Ok, T::Error>
-        where T: Serializer,
+    fn serialize<T>(&self, serializer: T) -> Result<T::Ok, T::Error>
+    where
+        T: Serializer,
     {
         let mut seq = try!(serializer.serialize_seq(Some(self.len())));
         for el in self {
@@ -40,7 +42,8 @@ impl<K> Default for LinkedHashSetVisitor<K> {
 }
 
 impl<'de, K> Visitor<'de> for LinkedHashSetVisitor<K>
-    where K: Deserialize<'de> + Eq + Hash,
+where
+    K: Deserialize<'de> + Eq + Hash,
 {
     type Value = LinkedHashSet<K>;
 
@@ -50,14 +53,16 @@ impl<'de, K> Visitor<'de> for LinkedHashSetVisitor<K>
 
     #[inline]
     fn visit_unit<E>(self) -> Result<Self::Value, E>
-        where E: Error,
+    where
+        E: Error,
     {
         Ok(LinkedHashSet::new())
     }
 
     #[inline]
     fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-        where A: SeqAccess<'de>,
+    where
+        A: SeqAccess<'de>,
     {
         let mut values = LinkedHashSet::with_capacity(seq.size_hint().unwrap_or(0));
 
@@ -70,32 +75,30 @@ impl<'de, K> Visitor<'de> for LinkedHashSetVisitor<K>
 }
 
 impl<'de, K> Deserialize<'de> for LinkedHashSet<K>
-    where K: Deserialize<'de> + Eq + Hash,
+where
+    K: Deserialize<'de> + Eq + Hash,
 {
     fn deserialize<D>(deserializer: D) -> Result<LinkedHashSet<K>, D::Error>
-        where D: Deserializer<'de>,
+    where
+        D: Deserializer<'de>,
     {
         deserializer.deserialize_seq(LinkedHashSetVisitor::default())
     }
 }
-
 
 #[cfg(test)]
 #[cfg(feature = "serde")]
 mod test {
     extern crate serde_test;
 
+    use self::serde_test::{assert_tokens, Token};
     use super::*;
-    use self::serde_test::{Token, assert_tokens};
 
     #[test]
     fn serde_empty() {
         let set = LinkedHashSet::<char>::new();
 
-        assert_tokens(&set, &[
-            Token::Seq { len: Some(0) },
-            Token::SeqEnd,
-        ]);
+        assert_tokens(&set, &[Token::Seq { len: Some(0) }, Token::SeqEnd]);
     }
 
     #[test]
@@ -105,12 +108,15 @@ mod test {
         set.insert('a');
         set.insert('c');
 
-        assert_tokens(&set, &[
-            Token::Seq { len: Some(3) },
+        assert_tokens(
+            &set,
+            &[
+                Token::Seq { len: Some(3) },
                 Token::Char('b'),
                 Token::Char('a'),
                 Token::Char('c'),
-            Token::SeqEnd,
-        ]);
+                Token::SeqEnd,
+            ],
+        );
     }
 }
