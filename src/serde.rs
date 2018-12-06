@@ -1,11 +1,8 @@
 //! An optional implementation of serialization/deserialization.
-
-extern crate serde;
-
-use self::serde::de::{Error, SeqAccess, Visitor};
-use self::serde::ser::SerializeSeq;
-use self::serde::{Deserialize, Deserializer, Serialize, Serializer};
 use super::LinkedHashSet;
+use serde::de::{Error, SeqAccess, Visitor};
+use serde::ser::SerializeSeq;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt::{Formatter, Result as FmtResult};
 use std::hash::{BuildHasher, Hash};
 use std::marker::PhantomData;
@@ -20,7 +17,7 @@ where
     where
         T: Serializer,
     {
-        let mut seq = try!(serializer.serialize_seq(Some(self.len())));
+        let mut seq = serializer.serialize_seq(Some(self.len()))?;
         for el in self {
             seq.serialize_element(el)?;
         }

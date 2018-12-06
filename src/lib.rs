@@ -17,9 +17,6 @@
 //! assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![234, 345, 123]);
 //! # }
 //! ```
-
-extern crate linked_hash_map;
-
 #[cfg(feature = "serde")]
 pub mod serde;
 
@@ -321,7 +318,7 @@ where
     ///     println!("{}", x);
     /// }
     /// ```
-    pub fn iter(&self) -> Iter<T> {
+    pub fn iter(&self) -> Iter<'_, T> {
         Iter {
             iter: self.map.keys(),
         }
@@ -823,7 +820,7 @@ where
     T: Eq + Hash + fmt::Debug,
     S: BuildHasher,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_set().entries(self.iter()).finish()
     }
 }
@@ -1007,7 +1004,7 @@ where
 /// See its documentation for more.
 /// [`LinkedHashSet`]: struct.LinkedHashSet.html
 /// [`iter`]: struct.LinkedHashSet.html#method.iter
-pub struct Iter<'a, K: 'a> {
+pub struct Iter<'a, K> {
     iter: Keys<'a, K, ()>,
 }
 
@@ -1041,7 +1038,7 @@ pub struct IntoIter<K> {
 ///
 /// [`LinkedHashSet`]: struct.LinkedHashSet.html
 /// [`intersection`]: struct.LinkedHashSet.html#method.intersection
-pub struct Intersection<'a, T: 'a, S: 'a> {
+pub struct Intersection<'a, T, S> {
     // iterator of the first set
     iter: Iter<'a, T>,
     // the second set
@@ -1055,7 +1052,7 @@ pub struct Intersection<'a, T: 'a, S: 'a> {
 ///
 /// [`LinkedHashSet`]: struct.LinkedHashSet.html
 /// [`difference`]: struct.LinkedHashSet.html#method.difference
-pub struct Difference<'a, T: 'a, S: 'a> {
+pub struct Difference<'a, T, S> {
     // iterator of the first set
     iter: Iter<'a, T>,
     // the second set
@@ -1069,7 +1066,7 @@ pub struct Difference<'a, T: 'a, S: 'a> {
 ///
 /// [`LinkedHashSet`]: struct.LinkedHashSet.html
 /// [`symmetric_difference`]: struct.LinkedHashSet.html#method.symmetric_difference
-pub struct SymmetricDifference<'a, T: 'a, S: 'a> {
+pub struct SymmetricDifference<'a, T, S> {
     iter: Chain<Difference<'a, T, S>, Difference<'a, T, S>>,
 }
 
@@ -1080,7 +1077,7 @@ pub struct SymmetricDifference<'a, T: 'a, S: 'a> {
 ///
 /// [`LinkedHashSet`]: struct.LinkedHashSet.html
 /// [`union`]: struct.LinkedHashSet.html#method.union
-pub struct Union<'a, T: 'a, S: 'a> {
+pub struct Union<'a, T, S> {
     iter: Chain<Iter<'a, T>, Difference<'a, T, S>>,
 }
 
@@ -1161,7 +1158,7 @@ impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
 }
 
 impl<'a, K: fmt::Debug> fmt::Debug for Iter<'a, K> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
     }
 }
@@ -1265,7 +1262,7 @@ where
     T: fmt::Debug + Eq + Hash,
     S: BuildHasher,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
     }
 }
@@ -1310,7 +1307,7 @@ where
     T: fmt::Debug + Eq + Hash,
     S: BuildHasher,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
     }
 }
@@ -1343,7 +1340,7 @@ where
     T: fmt::Debug + Eq + Hash,
     S: BuildHasher,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
     }
 }
@@ -1361,7 +1358,7 @@ where
     T: fmt::Debug + Eq + Hash,
     S: BuildHasher,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
     }
 }
