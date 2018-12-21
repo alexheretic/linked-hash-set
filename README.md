@@ -31,3 +31,6 @@ assert!(!set.insert(123));
 
 assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![234, 345, 123]);
 ```
+
+## Minimum supported rust compiler
+This crate is maintained with [latest stable rust](https://gist.github.com/alexheretic/d1e98d8433b602e57f5d0a9637927e0c).
