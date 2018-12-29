@@ -20,10 +20,7 @@ Compared to `indexmap::IndexSet`, while both maintain insertion order a `LinkedH
 ## Example
 
 ```rust
-extern crate linked_hash_set;
-use linked_hash_set::LinkedHashSet;
-
-let mut set = LinkedHashSet::new();
+let mut set = linked_hash_set::LinkedHashSet::new();
 assert!(set.insert(234));
 assert!(set.insert(123));
 assert!(set.insert(345));
