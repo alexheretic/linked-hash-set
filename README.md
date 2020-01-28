@@ -24,7 +24,7 @@ let mut set = linked_hash_set::LinkedHashSet::new();
 assert!(set.insert(234));
 assert!(set.insert(123));
 assert!(set.insert(345));
-assert!(!set.insert(123));
+assert!(!set.insert(123)); // Also see `insert_if_absent` which won't change order
 
 assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![234, 345, 123]);
 ```
