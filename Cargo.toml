@@ -10,7 +10,7 @@ license = "Apache-2.0"
 readme="README.md"
 
 [dependencies]
-linked-hash-map = "0.5"
+linked-hash-map = "0.5.3"
 serde = { version = "1", optional = true }
 
 [dev-dependencies]
