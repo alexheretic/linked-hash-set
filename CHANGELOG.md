@@ -1,4 +1,5 @@
 ## 0.1.5
+* Add `LinkedHashSet::drain`.
 * `LinkedHashSet::back` now uses `&self` instead of `&mut self`.
 * Require _linked-hash-map_ 0.5.6.
 
