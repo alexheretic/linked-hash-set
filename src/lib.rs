@@ -17,12 +17,14 @@ pub mod serde;
 
 use linked_hash_map as map;
 use linked_hash_map::{Keys, LinkedHashMap};
-use std::borrow::Borrow;
-use std::collections::hash_map::RandomState;
-use std::fmt;
-use std::hash::{BuildHasher, Hash, Hasher};
-use std::iter::{Chain, FromIterator};
-use std::ops::{BitAnd, BitOr, BitXor, Sub};
+use std::{
+    borrow::Borrow,
+    collections::hash_map::RandomState,
+    fmt,
+    hash::{BuildHasher, Hash, Hasher},
+    iter::{Chain, FromIterator},
+    ops::{BitAnd, BitOr, BitXor, Sub},
+};
 
 // Note: This implementation is adapted from std `HashSet` implementation ~2017-10
 // parts relying on std `HashMap` functionality that is not present in `LinkedHashMap` or
@@ -116,11 +118,8 @@ use std::ops::{BitAnd, BitOr, BitXor, Sub};
 /// ```
 /// use linked_hash_set::LinkedHashSet;
 ///
-/// fn main() {
-///     let viking_names: LinkedHashSet<&str> =
-///         ["Einar", "Olaf", "Harald"].iter().cloned().collect();
-///     // use the values stored in the set
-/// }
+/// let viking_names: LinkedHashSet<&str> = ["Einar", "Olaf", "Harald"].iter().cloned().collect();
+/// // use the values stored in the set
 /// ```
 ///
 /// [`front()`]: struct.LinkedHashSet.html#method.front
@@ -514,10 +513,11 @@ where
     /// assert_eq!(set.contains(&1), true);
     /// assert_eq!(set.contains(&4), false);
     /// ```
-    pub fn contains<Q: ?Sized>(&self, value: &Q) -> bool
+    pub fn contains<Q>(&self, value: &Q) -> bool
     where
         T: Borrow<Q>,
         Q: Hash + Eq,
+        Q: ?Sized,
     {
         self.map.contains_key(value)
     }
@@ -541,10 +541,11 @@ where
     /// assert_eq!(was_refreshed, true);
     /// assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![1, 3, 2]);
     /// ```
-    pub fn refresh<Q: ?Sized>(&mut self, value: &Q) -> bool
+    pub fn refresh<Q>(&mut self, value: &Q) -> bool
     where
         T: Borrow<Q>,
         Q: Hash + Eq,
+        Q: ?Sized,
     {
         self.map.get_refresh(value).is_some()
     }
@@ -707,10 +708,11 @@ where
     /// assert_eq!(set.remove(&2), true);
     /// assert_eq!(set.remove(&2), false);
     /// ```
-    pub fn remove<Q: ?Sized>(&mut self, value: &Q) -> bool
+    pub fn remove<Q>(&mut self, value: &Q) -> bool
     where
         T: Borrow<Q>,
         Q: Hash + Eq,
+        Q: ?Sized,
     {
         self.map.remove(value).is_some()
     }
@@ -865,7 +867,7 @@ where
     }
 }
 
-impl<'a, 'b, T, S> BitOr<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
+impl<T, S> BitOr<&LinkedHashSet<T, S>> for &LinkedHashSet<T, S>
 where
     T: Eq + Hash + Clone,
     S: BuildHasher + Default,
@@ -897,7 +899,7 @@ where
     }
 }
 
-impl<'a, 'b, T, S> BitAnd<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
+impl<T, S> BitAnd<&LinkedHashSet<T, S>> for &LinkedHashSet<T, S>
 where
     T: Eq + Hash + Clone,
     S: BuildHasher + Default,
@@ -929,7 +931,7 @@ where
     }
 }
 
-impl<'a, 'b, T, S> BitXor<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
+impl<T, S> BitXor<&LinkedHashSet<T, S>> for &LinkedHashSet<T, S>
 where
     T: Eq + Hash + Clone,
     S: BuildHasher + Default,
@@ -961,7 +963,7 @@ where
     }
 }
 
-impl<'a, 'b, T, S> Sub<&'b LinkedHashSet<T, S>> for &'a LinkedHashSet<T, S>
+impl<T, S> Sub<&LinkedHashSet<T, S>> for &LinkedHashSet<T, S>
 where
     T: Eq + Hash + Clone,
     S: BuildHasher + Default,
@@ -1141,7 +1143,7 @@ impl<'a, K> Iterator for Iter<'a, K> {
         self.iter.size_hint()
     }
 }
-impl<'a, K> ExactSizeIterator for Iter<'a, K> {
+impl<K> ExactSizeIterator for Iter<'_, K> {
     fn len(&self) -> usize {
         self.iter.len()
     }
@@ -1152,7 +1154,7 @@ impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
     }
 }
 
-impl<'a, K: fmt::Debug> fmt::Debug for Iter<'a, K> {
+impl<K: fmt::Debug> fmt::Debug for Iter<'_, K> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.clone()).finish()
     }
@@ -1252,7 +1254,7 @@ where
     }
 }
 
-impl<'a, T, S> fmt::Debug for Intersection<'a, T, S>
+impl<T, S> fmt::Debug for Intersection<'_, T, S>
 where
     T: fmt::Debug + Eq + Hash,
     S: BuildHasher,
@@ -1297,7 +1299,7 @@ where
     }
 }
 
-impl<'a, T, S> fmt::Debug for Difference<'a, T, S>
+impl<T, S> fmt::Debug for Difference<'_, T, S>
 where
     T: fmt::Debug + Eq + Hash,
     S: BuildHasher,
@@ -1330,7 +1332,7 @@ where
     }
 }
 
-impl<'a, T, S> fmt::Debug for SymmetricDifference<'a, T, S>
+impl<T, S> fmt::Debug for SymmetricDifference<'_, T, S>
 where
     T: fmt::Debug + Eq + Hash,
     S: BuildHasher,
@@ -1348,7 +1350,7 @@ impl<'a, T, S> Clone for Union<'a, T, S> {
     }
 }
 
-impl<'a, T, S> fmt::Debug for Union<'a, T, S>
+impl<T, S> fmt::Debug for Union<'_, T, S>
 where
     T: fmt::Debug + Eq + Hash,
     S: BuildHasher,
@@ -1813,10 +1815,7 @@ mod test_linked {
     #[test]
     fn clone_order_is_maintained() {
         let set = set![123, 234, 56, 677];
-        assert_eq!(
-            set.clone().into_iter().collect::<Vec<_>>(),
-            vec![123, 234, 56, 677]
-        );
+        assert_eq!(set.into_iter().collect::<Vec<_>>(), vec![123, 234, 56, 677]);
     }
 
     #[test]
@@ -1870,5 +1869,34 @@ mod test_linked {
 
         assert_eq!(iter.next(), None);
         assert_eq!(iter.next_back(), None);
+    }
+
+    #[test]
+    fn linked_set_equality() {
+        let mut set1 = LinkedHashSet::new();
+        assert!(set1.insert(234));
+        assert!(set1.insert(123));
+        assert!(set1.insert(345));
+
+        let mut set2 = LinkedHashSet::new();
+        assert!(set2.insert(123));
+        assert!(set2.insert(345));
+        assert!(set2.insert(234));
+
+        assert_eq!(set1, set2);
+
+        /// Returns true if the given sets are equal and have identical iteration order.
+        fn equal_and_same_order(a: &LinkedHashSet<i32>, b: &LinkedHashSet<i32>) -> bool {
+            a.len() == b.len() && a.iter().eq(b)
+        }
+
+        assert!(!equal_and_same_order(&set1, &set2));
+
+        let mut set3 = LinkedHashSet::new();
+        assert!(set3.insert(234));
+        assert!(set3.insert(123));
+        assert!(set3.insert(345));
+
+        assert!(equal_and_same_order(&set1, &set3));
     }
 }
