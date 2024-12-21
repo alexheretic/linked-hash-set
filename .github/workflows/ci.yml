@@ -1,0 +1,24 @@
+name: Rust
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      RUST_BACKTRACE: 1
+    steps:
+    - run: rustup update stable
+    - uses: actions/checkout@v4
+    - run: cargo test --all-features
+
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+    - run: rustup update stable
+    - uses: actions/checkout@v4
+    - run: cargo fmt -- --check

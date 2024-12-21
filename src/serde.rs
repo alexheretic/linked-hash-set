@@ -1,11 +1,15 @@
 //! An optional implementation of serialization/deserialization.
-use super::LinkedHashSet;
-use serde::de::{Error, SeqAccess, Visitor};
-use serde::ser::SerializeSeq;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::fmt::{Formatter, Result as FmtResult};
-use std::hash::{BuildHasher, Hash};
-use std::marker::PhantomData;
+use crate::LinkedHashSet;
+use serde::{
+    de::{Error, SeqAccess, Visitor},
+    ser::SerializeSeq,
+    Deserialize, Deserializer, Serialize, Serializer,
+};
+use std::{
+    fmt::{Formatter, Result as FmtResult},
+    hash::{BuildHasher, Hash},
+    marker::PhantomData,
+};
 
 impl<K, S> Serialize for LinkedHashSet<K, S>
 where
