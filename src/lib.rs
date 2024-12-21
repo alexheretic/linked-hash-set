@@ -762,7 +762,7 @@ where
     }
 
     /// Gets the last entry.
-    pub fn back(&mut self) -> Option<&T> {
+    pub fn back(&self) -> Option<&T> {
         self.map.back().map(|(k, _)| k)
     }
 
@@ -1833,7 +1833,7 @@ mod test_linked {
 
     #[test]
     fn delegate_back() {
-        let mut set = set![123, 234, 56, 677];
+        let set = set![123, 234, 56, 677];
         assert_eq!(set.back(), Some(&677));
     }
 
