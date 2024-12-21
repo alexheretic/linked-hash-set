@@ -118,7 +118,7 @@ use std::{
 /// ```
 /// use linked_hash_set::LinkedHashSet;
 ///
-/// let viking_names: LinkedHashSet<&str> = ["Einar", "Olaf", "Harald"].iter().cloned().collect();
+/// let viking_names: LinkedHashSet<&str> = ["Einar", "Olaf", "Harald"].into_iter().collect();
 /// // use the values stored in the set
 /// ```
 ///
@@ -325,8 +325,8 @@ where
     ///
     /// ```
     /// use linked_hash_set::LinkedHashSet;
-    /// let a: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
-    /// let b: LinkedHashSet<_> = [4, 2, 3, 4].iter().cloned().collect();
+    /// let a: LinkedHashSet<_> = [1, 2, 3].into_iter().collect();
+    /// let b: LinkedHashSet<_> = [4, 2, 3, 4].into_iter().collect();
     ///
     /// // Can be seen as `a - b`.
     /// for x in a.difference(&b) {
@@ -355,8 +355,8 @@ where
     ///
     /// ```
     /// use linked_hash_set::LinkedHashSet;
-    /// let a: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
-    /// let b: LinkedHashSet<_> = [4, 2, 3, 4].iter().cloned().collect();
+    /// let a: LinkedHashSet<_> = [1, 2, 3].into_iter().collect();
+    /// let b: LinkedHashSet<_> = [4, 2, 3, 4].into_iter().collect();
     ///
     /// // Print 1, 4 in insertion order.
     /// for x in a.symmetric_difference(&b) {
@@ -385,8 +385,8 @@ where
     ///
     /// ```
     /// use linked_hash_set::LinkedHashSet;
-    /// let a: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
-    /// let b: LinkedHashSet<_> = [4, 2, 3, 4].iter().cloned().collect();
+    /// let a: LinkedHashSet<_> = [1, 2, 3].into_iter().collect();
+    /// let b: LinkedHashSet<_> = [4, 2, 3, 4].into_iter().collect();
     ///
     /// // Print 2, 3 in insertion order.
     /// for x in a.intersection(&b) {
@@ -410,8 +410,8 @@ where
     ///
     /// ```
     /// use linked_hash_set::LinkedHashSet;
-    /// let a: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
-    /// let b: LinkedHashSet<_> = [4, 2, 3, 4].iter().cloned().collect();
+    /// let a: LinkedHashSet<_> = [1, 2, 3].into_iter().collect();
+    /// let b: LinkedHashSet<_> = [4, 2, 3, 4].into_iter().collect();
     ///
     /// // Print 1, 2, 3, 4 in insertion order.
     /// for x in a.union(&b) {
@@ -459,28 +459,29 @@ where
         self.map.is_empty()
     }
 
-    // TODO not in linked_hash_map
-    // /// Clears the set, returning all elements in an iterator.
-    // ///
-    // /// # Examples
-    // ///
-    // /// ```
-    // /// use linked_hash_set::LinkedHashSet;
-    // ///
-    // /// let mut set: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
-    // /// assert!(!set.is_empty());
-    // ///
-    // /// // print 1, 2, 3 in an insertion order
-    // /// for i in set.drain() {
-    // ///     println!("{}", i);
-    // /// }
-    // ///
-    // /// assert!(set.is_empty());
-    // /// ```
-    // #[inline]
-    // pub fn drain(&mut self) -> Drain<T> {
-    //     Drain { iter: self.map.drain() }
-    // }
+    /// Clears the set, returning all elements in an iterator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use linked_hash_set::LinkedHashSet;
+    ///
+    /// let mut set: LinkedHashSet<_> = [1, 2, 3].into_iter().collect();
+    /// assert!(!set.is_empty());
+    ///
+    /// // print 1, 2, 3 in an insertion order
+    /// for i in set.drain() {
+    ///     println!("{}", i);
+    /// }
+    ///
+    /// assert!(set.is_empty());
+    /// ```
+    #[inline]
+    pub fn drain(&mut self) -> Drain<T> {
+        Drain {
+            iter: self.map.drain(),
+        }
+    }
 
     /// Clears the set, removing all values.
     ///
@@ -509,7 +510,7 @@ where
     /// ```
     /// use linked_hash_set::LinkedHashSet;
     ///
-    /// let set: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
+    /// let set: LinkedHashSet<_> = [1, 2, 3].into_iter().collect();
     /// assert_eq!(set.contains(&1), true);
     /// assert_eq!(set.contains(&4), false);
     /// ```
@@ -535,7 +536,7 @@ where
     /// ```
     /// use linked_hash_set::LinkedHashSet;
     ///
-    /// let mut set: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
+    /// let mut set: LinkedHashSet<_> = [1, 2, 3].into_iter().collect();
     /// let was_refreshed = set.refresh(&2);
     ///
     /// assert_eq!(was_refreshed, true);
@@ -571,7 +572,7 @@ where
     /// ```
     /// use linked_hash_set::LinkedHashSet;
     ///
-    /// let a: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
+    /// let a: LinkedHashSet<_> = [1, 2, 3].into_iter().collect();
     /// let mut b = LinkedHashSet::new();
     ///
     /// assert_eq!(a.is_disjoint(&b), true);
@@ -592,7 +593,7 @@ where
     /// ```
     /// use linked_hash_set::LinkedHashSet;
     ///
-    /// let sup: LinkedHashSet<_> = [1, 2, 3].iter().cloned().collect();
+    /// let sup: LinkedHashSet<_> = [1, 2, 3].into_iter().collect();
     /// let mut set = LinkedHashSet::new();
     ///
     /// assert_eq!(set.is_subset(&sup), true);
@@ -613,7 +614,7 @@ where
     /// ```
     /// use linked_hash_set::LinkedHashSet;
     ///
-    /// let sub: LinkedHashSet<_> = [1, 2].iter().cloned().collect();
+    /// let sub: LinkedHashSet<_> = [1, 2].into_iter().collect();
     /// let mut set = LinkedHashSet::new();
     ///
     /// assert_eq!(set.is_superset(&sub), false);
@@ -1016,17 +1017,16 @@ pub struct IntoIter<K> {
     iter: map::IntoIter<K, ()>,
 }
 
-// TODO not in linked_hash_map
-// /// A draining iterator over the items of a `LinkedHashSet`.
-// ///
-// /// This `struct` is created by the [`drain`] method on [`LinkedHashSet`].
-// /// See its documentation for more.
-// ///
-// /// [`LinkedHashSet`]: struct.LinkedHashSet.html
-// /// [`drain`]: struct.LinkedHashSet.html#method.drain
-// pub struct Drain<'a, K: 'a> {
-//     iter: map::Drain<'a, K, ()>,
-// }
+/// A draining iterator over the items of a `LinkedHashSet`.
+///
+/// This `struct` is created by the [`drain`] method on [`LinkedHashSet`].
+/// See its documentation for more.
+///
+/// [`LinkedHashSet`]: struct.LinkedHashSet.html
+/// [`drain`]: struct.LinkedHashSet.html#method.drain
+pub struct Drain<'a, K: 'a> {
+    iter: map::Drain<'a, K, ()>,
+}
 
 /// A lazy iterator producing elements in the intersection of `LinkedHashSet`s.
 ///
@@ -1192,23 +1192,24 @@ impl<K> DoubleEndedIterator for IntoIter<K> {
 //     }
 // }
 
-// TODO not in linked_hash_map
-// impl<'a, K> Iterator for Drain<'a, K> {
-//     type Item = K;
-//
-//     fn next(&mut self) -> Option<K> {
-//         self.iter.next().map(|(k, _)| k)
-//     }
-//     fn size_hint(&self) -> (usize, Option<usize>) {
-//         self.iter.size_hint()
-//     }
-// }
-// impl<'a, K> ExactSizeIterator for Drain<'a, K> {
-//     fn len(&self) -> usize {
-//         self.iter.len()
-//     }
-// }
-//
+impl<K> Iterator for Drain<'_, K> {
+    type Item = K;
+
+    fn next(&mut self) -> Option<K> {
+        self.iter.next().map(|(k, _)| k)
+    }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.iter.size_hint()
+    }
+}
+
+impl<K> ExactSizeIterator for Drain<'_, K> {
+    fn len(&self) -> usize {
+        self.iter.len()
+    }
+}
+
+// TODO Non-trivial port without private access to map
 // impl<'a, K: fmt::Debug> fmt::Debug for Drain<'a, K> {
 //     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 //         let entries_iter = self.iter
@@ -1680,72 +1681,70 @@ mod test_set {
         assert_eq!(format!("{:?}", empty), "{}");
     }
 
-    // #[test]
-    // fn test_trivial_drain() {
-    //     let mut s = LinkedHashSet::<i32>::new();
-    //     for _ in s.drain() {}
-    //     assert!(s.is_empty());
-    //     drop(s);
-    //
-    //     let mut s = LinkedHashSet::<i32>::new();
-    //     drop(s.drain());
-    //     assert!(s.is_empty());
-    // }
+    #[test]
+    fn test_trivial_drain() {
+        let mut s = LinkedHashSet::<i32>::new();
+        for _ in s.drain() {}
+        assert!(s.is_empty());
+        drop(s);
 
-    // #[test]
-    // fn test_drain() {
-    //     let mut s: LinkedHashSet<_> = (1..100).collect();
-    //
-    //     // try this a bunch of times to make sure we don't screw up internal state.
-    //     for _ in 0..20 {
-    //         assert_eq!(s.len(), 99);
-    //
-    //         {
-    //             let mut last_i = 0;
-    //             let mut d = s.drain();
-    //             for (i, x) in d.by_ref().take(50).enumerate() {
-    //                 last_i = i;
-    //                 assert!(x != 0);
-    //             }
-    //             assert_eq!(last_i, 49);
-    //         }
-    //
-    //         for _ in &s {
-    //             panic!("s should be empty!");
-    //         }
-    //
-    //         // reset to try again.
-    //         s.extend(1..100);
-    //     }
-    // }
+        let mut s = LinkedHashSet::<i32>::new();
+        drop(s.drain());
+        assert!(s.is_empty());
+    }
+
+    #[test]
+    fn test_drain() {
+        let mut s: LinkedHashSet<_> = (1..100).collect();
+
+        // try this a bunch of times to make sure we don't screw up internal state.
+        for _ in 0..20 {
+            assert_eq!(s.len(), 99);
+
+            {
+                let mut last_i = 0;
+                let mut d = s.drain();
+                for (i, x) in d.by_ref().take(50).enumerate() {
+                    last_i = i;
+                    assert!(x != 0);
+                }
+                assert_eq!(last_i, 49);
+            }
+
+            assert!(s.is_empty(), "{s:?}");
+
+            // reset to try again.
+            s.extend(1..100);
+        }
+    }
 
     // #[test]
     // fn test_replace() {
     //     use std::hash;
-    //
+
     //     #[derive(Debug)]
     //     struct Foo(&'static str, i32);
-    //
+
     //     impl PartialEq for Foo {
     //         fn eq(&self, other: &Self) -> bool {
     //             self.0 == other.0
     //         }
     //     }
-    //
+
     //     impl Eq for Foo {}
-    //
+
     //     impl hash::Hash for Foo {
     //         fn hash<H: hash::Hasher>(&self, h: &mut H) {
     //             self.0.hash(h);
     //         }
     //     }
-    //
+
     //     let mut s = LinkedHashSet::new();
     //     assert_eq!(s.replace(Foo("a", 1)), None);
     //     assert_eq!(s.len(), 1);
     //     assert_eq!(s.replace(Foo("a", 2)), Some(Foo("a", 1)));
     //     assert_eq!(s.len(), 1);
-    //
+
     //     let mut it = s.iter();
     //     assert_eq!(it.next(), Some(&Foo("a", 2)));
     //     assert_eq!(it.next(), None);
