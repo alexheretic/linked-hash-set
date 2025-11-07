@@ -1,3 +1,6 @@
+## Unreleased (0.1.6)
+* Feature "serde": Replace _serde_ crate with _serde_core_.
+
 ## 0.1.5
 * Add `LinkedHashSet::drain`.
 * `LinkedHashSet::back` now uses `&self` instead of `&mut self`.
