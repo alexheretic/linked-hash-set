@@ -1,6 +1,6 @@
 //! An optional implementation of serialization/deserialization.
 use crate::LinkedHashSet;
-use serde::{
+use serde_core::{
     de::{Error, SeqAccess, Visitor},
     ser::SerializeSeq,
     Deserialize, Deserializer, Serialize, Serializer,
