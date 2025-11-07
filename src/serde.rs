@@ -1,9 +1,9 @@
 //! An optional implementation of serialization/deserialization.
 use crate::LinkedHashSet;
 use serde_core::{
+    Deserialize, Deserializer, Serialize, Serializer,
     de::{Error, SeqAccess, Visitor},
     ser::SerializeSeq,
-    Deserialize, Deserializer, Serialize, Serializer,
 };
 use std::{
     fmt::{Formatter, Result as FmtResult},
@@ -92,7 +92,7 @@ where
 mod test {
     extern crate serde_test;
 
-    use self::serde_test::{assert_tokens, Token};
+    use self::serde_test::{Token, assert_tokens};
     use super::*;
 
     #[test]

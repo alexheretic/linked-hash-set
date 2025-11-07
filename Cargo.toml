@@ -2,7 +2,7 @@
 name = "linked_hash_set"
 version = "0.1.5"
 authors = ["Alex Butler <alexheretic@gmail.com>"]
-edition = "2021"
+edition = "2024"
 description = "HashSet with insertion ordering"
 repository = "https://github.com/alexheretic/linked-hash-set"
 keywords = ["data-structures"]
