@@ -1,4 +1,4 @@
-## Unreleased (0.1.6)
+## 0.1.6
 * Feature "serde": Replace _serde_ crate with _serde_core_.
 
 ## 0.1.5
