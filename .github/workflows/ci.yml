@@ -13,12 +13,12 @@ jobs:
       RUST_BACKTRACE: 1
     steps:
     - run: rustup update stable
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - run: cargo test --all-features
 
   rustfmt:
     runs-on: ubuntu-latest
     steps:
     - run: rustup update stable
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - run: cargo fmt -- --check
