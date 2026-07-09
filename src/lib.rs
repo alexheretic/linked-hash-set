@@ -1238,13 +1238,9 @@ where
 
     fn next(&mut self) -> Option<&'a T> {
         loop {
-            match self.iter.next() {
-                None => return None,
-                Some(elt) => {
-                    if self.other.contains(elt) {
-                        return Some(elt);
-                    }
-                }
+            let elt = self.iter.next()?;
+            if self.other.contains(elt) {
+                return Some(elt);
             }
         }
     }
@@ -1283,13 +1279,9 @@ where
 
     fn next(&mut self) -> Option<&'a T> {
         loop {
-            match self.iter.next() {
-                None => return None,
-                Some(elt) => {
-                    if !self.other.contains(elt) {
-                        return Some(elt);
-                    }
-                }
+            let elt = self.iter.next()?;
+            if !self.other.contains(elt) {
+                return Some(elt);
             }
         }
     }
